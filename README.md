@@ -1,1 +1,1 @@
-# [KiloByteMarketing.com](https://www.KiloByteMarketing.com)
+# [KilobyteMarketing.com](https://www.KilobyteMarketing.com)
