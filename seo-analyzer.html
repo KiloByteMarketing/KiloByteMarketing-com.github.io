@@ -53,32 +53,30 @@
       e.preventDefault();
       const url = document.getElementById("urlInput").value;
 
-      try {
-        const response = await fetch(url);
-        const data = await response.json();
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(data.contents, "text/html");
+      const response = await fetch(url);
+      console.log('res', response)
+      const data = await response.json();
+      console.log('data', data)
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(data.contents, "text/html");
 
-        const title = doc.querySelector("title")?.textContent || "No title found";
-        const description = doc.querySelector('meta[name="description"]')?.content || "No meta description found";
+      const title = doc.querySelector("title")?.textContent || "No title found";
+      const description = doc.querySelector('meta[name="description"]')?.content || "No meta description found";
 
-        const headings = Array.from(doc.querySelectorAll("h1, h2, h3"))
-          .map(h => `<li>${h.tagName}: ${h.textContent.trim()}</li>`)
-          .join("");
+      const headings = Array.from(doc.querySelectorAll("h1, h2, h3"))
+        .map(h => `<li>${h.tagName}: ${h.textContent.trim()}</li>`)
+        .join("");
 
-        const images = Array.from(doc.querySelectorAll("img"));
-        const missingAlts = images.filter(img => !img.alt).length;
+      const images = Array.from(doc.querySelectorAll("img"));
+      const missingAlts = images.filter(img => !img.alt).length;
 
-        // Populate results
-        document.getElementById("titleResult").innerHTML = `<strong>Title:</strong> ${title}`;
-        document.getElementById("descriptionResult").innerHTML = `<strong>Meta Description:</strong> ${description}`;
-        document.getElementById("headingsResult").innerHTML = `<strong>Headings:</strong><ul class="list-disc pl-5 mt-1">${headings}</ul>`;
-        document.getElementById("altResult").innerHTML = `<strong>Images without alt text:</strong> ${missingAlts}`;
+      // Populate results
+      document.getElementById("titleResult").innerHTML = `<strong>Title:</strong> ${title}`;
+      document.getElementById("descriptionResult").innerHTML = `<strong>Meta Description:</strong> ${description}`;
+      document.getElementById("headingsResult").innerHTML = `<strong>Headings:</strong><ul class="list-disc pl-5 mt-1">${headings}</ul>`;
+      document.getElementById("altResult").innerHTML = `<strong>Images without alt text:</strong> ${missingAlts}`;
 
-        document.getElementById("results").classList.remove("hidden");
-      } catch (error) {
-        alert("Unable to fetch the page. Ensure the URL is public and CORS is not blocking the request.");
-      }
+      document.getElementById("results").classList.remove("hidden");
     });
   </script>
 </body>
