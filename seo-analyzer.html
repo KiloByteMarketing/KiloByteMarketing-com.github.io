@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Analyze your website's SEO attributes with Kilobyte Marketing's free SEO analyzer tool.">
+  <meta name="keywords" content="SEO Analyzer, QR Generator, Logo Generator, Marketing Tools, Free Tools" />
+  <meta name="author" content="Kilobyte Marketing" />
+  <title>SEO Analyzer | Kilobyte Marketing</title>
+  <script src="assets/scripts/tailwindcss-browser@4.1.11.js"></script>
+  <script src="assets/scripts/gtag_consent.js"></script>
+  <link rel="icon" href="assets/favicons/favicon.ico">
+</head>
+<body class="bg-gray-50 text-gray-900 font-sans leading-relaxed">
+  <!-- Consent Banner -->
+  <div id="consent-banner" style="display:none; position:fixed; bottom:0; left:0; right:0; background:#1a202c; color:#fff; z-index:1000; padding:1.5rem 1rem; text-align:center;">
+    <span style="font-size:1rem;">This site uses cookies for analytics. Do you consent to the use of Google Analytics?</span>
+    <button onclick="giveConsent()" style="margin-left:1rem; background:#2563eb; color:#fff; border:none; padding:0.5rem 1.2rem; border-radius:0.375rem; font-weight:500; cursor:pointer;">Allow</button>
+    <button onclick="denyConsent()" style="margin-left:0.5rem; background:#e5e7eb; color:#1a202c; border:none; padding:0.5rem 1.2rem; border-radius:0.375rem; font-weight:500; cursor:pointer;">Deny</button>
+  </div>
+  <!-- Header -->
+  <header class="bg-white shadow">
+    <div class="max-w-4xl mx-auto px-4 py-6">
+      <h1 class="text-3xl font-bold">SEO Analyzer</h1>
+      <p class="text-sm text-gray-600">A free tool by Kilobyte Marketing to check on-page SEO attributes.</p>
+    </div>
+  </header>
+
+  <main class="max-w-4xl mx-auto p-4 mt-6">
+    <form id="seoForm" class="mb-6">
+      <label for="urlInput" class="block mb-2 font-medium">Enter a website URL:</label>
+      <input type="url" id="urlInput" name="url" required placeholder="https://example.com"
+        class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring focus:border-blue-500" />
+      <button type="submit"
+        class="mt-4 px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Analyze</button>
+    </form>
+
+    <section id="results" class="space-y-4 hidden">
+      <h2 class="text-xl font-semibold">SEO Results</h2>
+      <div id="titleResult" class="p-4 bg-white border rounded shadow"></div>
+      <div id="descriptionResult" class="p-4 bg-white border rounded shadow"></div>
+      <div id="headingsResult" class="p-4 bg-white border rounded shadow"></div>
+      <div id="altResult" class="p-4 bg-white border rounded shadow"></div>
+    </section>
+  </main>
+
+  <footer class="mt-12 text-center text-gray-500 text-sm">
+    © 2025 Kilobyte Marketing. All rights reserved.
+  </footer>
+
+  <script>
+    document.getElementById("seoForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      const url = document.getElementById("urlInput").value;
+      const proxyUrl = "https://api.allorigins.win/get?url=" + encodeURIComponent(url);
+
+      try {
+        const response = await fetch(proxyUrl);
+        const data = await response.json();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(data.contents, "text/html");
+
+        const title = doc.querySelector("title")?.textContent || "No title found";
+        const description = doc.querySelector('meta[name="description"]')?.content || "No meta description found";
+
+        const headings = Array.from(doc.querySelectorAll("h1, h2, h3"))
+          .map(h => `<li>${h.tagName}: ${h.textContent.trim()}</li>`)
+          .join("");
+
+        const images = Array.from(doc.querySelectorAll("img"));
+        const missingAlts = images.filter(img => !img.alt).length;
+
+        // Populate results
+        document.getElementById("titleResult").innerHTML = `<strong>Title:</strong> ${title}`;
+        document.getElementById("descriptionResult").innerHTML = `<strong>Meta Description:</strong> ${description}`;
+        document.getElementById("headingsResult").innerHTML = `<strong>Headings:</strong><ul class="list-disc pl-5 mt-1">${headings}</ul>`;
+        document.getElementById("altResult").innerHTML = `<strong>Images without alt text:</strong> ${missingAlts}`;
+
+        document.getElementById("results").classList.remove("hidden");
+      } catch (error) {
+        alert("Unable to fetch the page. Ensure the URL is public and CORS is not blocking the request.");
+      }
+    });
+  </script>
+</body>
+</html>
