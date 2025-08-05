@@ -54,11 +54,10 @@
       const url = document.getElementById("urlInput").value;
 
       const response = await fetch(url);
-      console.log('res', response)
-      const data = await response.json();
-      console.log('data', data)
+      const siteContent = await response.text();
+
       const parser = new DOMParser();
-      const doc = parser.parseFromString(data.contents, "text/html");
+      const doc = parser.parseFromString(siteContent, "text/html");
 
       const title = doc.querySelector("title")?.textContent || "No title found";
       const description = doc.querySelector('meta[name="description"]')?.content || "No meta description found";
